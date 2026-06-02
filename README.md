@@ -33,3 +33,14 @@ After configuring signing in Xcode:
 5. Export the signed `.ipa`.
 
 The `.ipa` only installs on devices covered by the provisioning profile used during export.
+
+## Build from Terminal
+
+After installing the full Xcode app and signing in with your Apple ID, you can also export an `.ipa` from Terminal:
+
+```sh
+chmod +x scripts/build-ipa.sh
+DEVELOPMENT_TEAM=YOUR_TEAM_ID scripts/build-ipa.sh
+```
+
+The exported package will be in `build/export`.
