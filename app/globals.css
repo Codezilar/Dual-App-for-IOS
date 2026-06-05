@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 222 47% 11%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 38% 92%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 94%;
+    --muted-foreground: 215 16% 44%;
+    --accent: 188 78% 92%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 88%;
+    --input: 214 32% 88%;
+    --ring: 188 86% 40%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222 47% 7%;
+    --foreground: 210 40% 96%;
+    --card: 222 40% 10%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 40% 10%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 174 72% 56%;
+    --primary-foreground: 222 47% 7%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 217 33% 14%;
+    --muted-foreground: 215 20% 70%;
+    --accent: 217 33% 18%;
+    --accent-foreground: 210 40% 96%;
+    --destructive: 0 63% 45%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 19%;
+    --input: 217 33% 19%;
+    --ring: 174 72% 56%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply border border-white/40 bg-white/70 shadow-soft backdrop-blur-2xl dark:border-white/10 dark:bg-white/5;
+  }
+
+  .mesh-bg {
+    background:
+      radial-gradient(circle at 10% 10%, rgba(20, 184, 166, 0.18), transparent 28%),
+      radial-gradient(circle at 85% 0%, rgba(244, 114, 182, 0.16), transparent 24%),
+      radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.12), transparent 24%),
+      hsl(var(--background));
+  }
+}

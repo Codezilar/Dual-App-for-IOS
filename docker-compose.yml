@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+      - redis
+
+  mongodb:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: dual
+      MONGO_INITDB_ROOT_PASSWORD: dual
+      MONGO_INITDB_DATABASE: dual_workspace
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  mongo-data:
+  redis-data:
