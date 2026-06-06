@@ -13,7 +13,7 @@ export function StatsPanel() {
     { label: "Active instances", value: active.toString(), icon: Activity, detail: "Live session containers" },
     { label: "Profiles", value: profiles.toString(), icon: ShieldCheck, detail: "Unique cookie stores" },
     { label: "Storage", value: "18.4 GB", icon: HardDrive, detail: "Across cached profiles" },
-    { label: "Redis events", value: "1.2k", icon: Database, detail: "Session monitor stream" }
+    { label: "Audit events", value: "1.2k", icon: Database, detail: "Mongo-backed activity log" }
   ];
 
   return (

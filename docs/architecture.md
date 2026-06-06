@@ -37,15 +37,16 @@ In production, do not load third-party apps directly in normal iframes because m
 3. A browser worker launches a persistent context keyed by `profileKey`.
 4. Cookies, localStorage, sessionStorage, IndexedDB, cache, and service workers are scoped to that context directory or remote browser profile.
 5. The user connects through a streamed viewport, reverse proxy, or browser automation protocol.
-6. Redis stores live instance heartbeats, locks, and usage metrics.
-7. MongoDB stores durable profile metadata, workspace documents, and audit logs through Mongoose models.
+6. MongoDB stores durable profile metadata, workspace documents, session snapshots, and audit logs through Mongoose models.
+7. Browser workers can keep short-lived heartbeats and locks in local memory for a free single-node setup.
 
 Recommended worker options:
 
 - Playwright persistent contexts for self-hosted browser workers.
 - Browserless, Chrome DevTools Protocol, or remote Chromium clusters for scale.
 - Per-profile encrypted storage volumes for regulated customers.
-- Redis pub/sub for active instance tracking and disconnect cleanup.
+- In-memory worker events for active instance tracking in the free single-node setup.
+- Upgrade to a managed queue or pub/sub service only when you need multiple browser worker nodes.
 
 ## API Routes
 
@@ -58,15 +59,15 @@ Recommended worker options:
 ## Deployment
 
 1. Copy `.env.example` to `.env`.
-2. Run `docker compose up -d mongodb redis`.
+2. Run `docker compose up -d mongodb`.
 3. Run `npm install`.
 4. Run `npm run dev`.
 
 For production:
 
-1. Provision MongoDB and Redis.
-2. Set `MONGODB_URI`, `MONGODB_DB`, `REDIS_URL`, `SESSION_ENCRYPTION_KEY`, and `NEXT_PUBLIC_APP_URL`.
+1. Provision MongoDB. MongoDB Atlas has a free tier, or you can self-host with Docker.
+2. Set `MONGODB_URI`, `MONGODB_DB`, `SESSION_ENCRYPTION_KEY`, and `NEXT_PUBLIC_APP_URL`.
 3. Run `npm run build`.
 4. Deploy the Next.js app behind TLS.
 5. Deploy browser workers separately with encrypted profile volumes.
-6. Configure autoscaling from Redis active-session metrics.
+6. For a single-node free deployment, keep worker heartbeats in memory and store durable audit/session data in MongoDB.
