@@ -6,6 +6,7 @@ const appInstanceSchema = new Schema(
     appType: { type: String, required: true, index: true },
     launchUrl: { type: String, required: true },
     logoUrl: { type: String },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
     workspaceId: { type: Schema.Types.ObjectId, ref: "Workspace", required: true, index: true },
     folderId: { type: Schema.Types.ObjectId },
     profileId: { type: Schema.Types.ObjectId, ref: "SessionProfile", required: true, index: true },
@@ -24,6 +25,7 @@ const appInstanceSchema = new Schema(
 );
 
 appInstanceSchema.index({ workspaceId: 1, appType: 1 });
+appInstanceSchema.index({ userId: 1, updatedAt: -1 });
 
 export type AppInstanceDocument = InferSchemaType<typeof appInstanceSchema>;
 export const AppInstance: Model<AppInstanceDocument> =
