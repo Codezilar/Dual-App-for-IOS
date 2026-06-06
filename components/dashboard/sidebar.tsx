@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Activity, AppWindow, Bell, Folder, Gauge, LayoutDashboard, Plus, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,20 +11,21 @@ import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/store/workspace-store";
 
 const nav = [
-  { label: "Dashboard", icon: LayoutDashboard },
-  { label: "Instances", icon: AppWindow },
-  { label: "Monitoring", icon: Activity },
-  { label: "Security", icon: ShieldCheck },
-  { label: "Users", icon: Users },
-  { label: "Analytics", icon: Gauge }
+  { label: "Dashboard", href: "/", icon: LayoutDashboard },
+  { label: "Instances", href: "/instances", icon: AppWindow },
+  { label: "Monitoring", href: "/monitoring", icon: Activity },
+  { label: "Security", href: "/security", icon: ShieldCheck },
+  { label: "Users", href: "/users", icon: Users },
+  { label: "Analytics", href: "/analytics", icon: Gauge }
 ];
 
 export function Sidebar() {
+  const pathname = usePathname();
   const selectedFolder = useWorkspaceStore((state) => state.selectedFolder);
   const setSelectedFolder = useWorkspaceStore((state) => state.setSelectedFolder);
 
   return (
-    <aside className="hidden min-h-screen w-72 shrink-0 border-r bg-background/70 p-4 backdrop-blur-xl lg:block">
+    <aside className="relative hidden min-h-screen w-72 shrink-0 border-r bg-background/70 p-4 backdrop-blur-xl lg:block">
       <div className="flex items-center gap-3 px-2 py-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
           <AppWindow className="h-5 w-5" />
@@ -33,23 +36,32 @@ export function Sidebar() {
         </div>
       </div>
 
-      <Button className="mt-4 w-full justify-start" size="sm">
-        <Plus className="h-4 w-4" />
-        New instance
+      <Button asChild className="mt-4 w-full justify-start" size="sm">
+        <Link href="/instances">
+          <Plus className="h-4 w-4" />
+          New instance
+        </Link>
       </Button>
 
       <nav className="mt-6 space-y-1">
         {nav.map((item, index) => (
-          <motion.button
+          <motion.div
             key={item.label}
             initial={{ opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.03 }}
-            className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition hover:bg-accent hover:text-foreground"
           >
-            <item.icon className="h-4 w-4" />
-            {item.label}
-          </motion.button>
+            <Link
+              href={item.href}
+              className={cn(
+                "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition hover:bg-accent hover:text-foreground",
+                pathname === item.href && "bg-accent text-foreground"
+              )}
+            >
+              <item.icon className="h-4 w-4" />
+              {item.label}
+            </Link>
+          </motion.div>
         ))}
       </nav>
 
