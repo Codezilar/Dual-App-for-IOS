@@ -1,5 +1,7 @@
 import { WorkspaceDashboard } from "@/components/dashboard/workspace-dashboard";
+import { requireUser } from "@/lib/auth";
 
-export default function Home() {
+export default async function Home() {
+  await requireUser();
   return <WorkspaceDashboard />;
 }

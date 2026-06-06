@@ -2,9 +2,11 @@ import Link from "next/link";
 import { ArrowLeft, ExternalLink, LockKeyhole, RotateCcw, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { requireUser } from "@/lib/auth";
 import { initialInstances } from "@/lib/mock-data";
 
 export default async function BrowserContainerPage({ params }: { params: Promise<{ instanceId: string }> }) {
+  await requireUser();
   const { instanceId } = await params;
   const instance = initialInstances.find((item) => item.id === instanceId) ?? initialInstances[0];
 

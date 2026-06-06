@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
+import { getCurrentUser } from "@/lib/auth";
 import { AppInstance } from "@/lib/models";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { id } = await params;
   await connectToDatabase();
   const body = (await request.json()) as {
@@ -12,8 +16,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     folderId?: string | null;
   };
 
-  const instance = await AppInstance.findByIdAndUpdate(
-    id,
+  const instance = await AppInstance.findOneAndUpdate(
+    { _id: id, userId: user.id },
     {
       ...(body.name !== undefined ? { name: body.name } : {}),
       ...(body.favorite !== undefined ? { favorite: body.favorite } : {}),
@@ -32,9 +36,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { id } = await params;
   await connectToDatabase();
-  const instance = await AppInstance.findByIdAndDelete(id);
+  const instance = await AppInstance.findOneAndDelete({ _id: id, userId: user.id });
 
   if (!instance) {
     return NextResponse.json({ error: "Instance not found" }, { status: 404 });

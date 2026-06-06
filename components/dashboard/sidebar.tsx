@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Activity, AppWindow, Bell, Folder, Gauge, LayoutDashboard, Plus, ShieldCheck, Users } from "lucide-react";
+import { Activity, AppWindow, Bell, Folder, Gauge, LayoutDashboard, LogOut, Plus, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { folders } from "@/lib/mock-data";
@@ -21,8 +21,15 @@ const nav = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const selectedFolder = useWorkspaceStore((state) => state.selectedFolder);
   const setSelectedFolder = useWorkspaceStore((state) => state.setSelectedFolder);
+
+  async function logout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.replace("/login");
+    router.refresh();
+  }
 
   return (
     <aside className="relative hidden min-h-screen w-72 shrink-0 border-r bg-background/70 p-4 backdrop-blur-xl lg:block">
@@ -102,6 +109,10 @@ export function Sidebar() {
         <p className="mt-2 text-xs leading-5 text-muted-foreground">
           7 profiles isolated, 3 active, no cross-profile leakage detected.
         </p>
+        <Button className="mt-3 w-full justify-start" size="sm" variant="outline" onClick={logout}>
+          <LogOut className="h-4 w-4" />
+          Log out
+        </Button>
       </div>
     </aside>
   );
