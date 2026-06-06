@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { Activity, AppWindow, Bell, Folder, Gauge, LayoutDashboard, LogOut, Plus, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { folders } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/store/workspace-store";
 
@@ -22,8 +21,11 @@ const nav = [
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const instances = useWorkspaceStore((state) => state.instances);
   const selectedFolder = useWorkspaceStore((state) => state.selectedFolder);
   const setSelectedFolder = useWorkspaceStore((state) => state.setSelectedFolder);
+  const active = instances.filter((instance) => instance.status === "ONLINE").length;
+  const profiles = new Set(instances.map((instance) => instance.profileId)).size;
 
   async function logout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -86,19 +88,6 @@ export function Sidebar() {
           <Folder className="h-4 w-4" />
           All instances
         </button>
-        {folders.map((folder) => (
-          <button
-            key={folder.id}
-            onClick={() => setSelectedFolder(folder.id)}
-            className={cn(
-              "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition hover:bg-accent",
-              selectedFolder === folder.id && "bg-accent text-foreground"
-            )}
-          >
-            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: folder.color }} />
-            {folder.name}
-          </button>
-        ))}
       </div>
 
       <div className="absolute bottom-4 left-4 right-4 hidden w-64 rounded-lg border bg-card p-4 lg:block">
@@ -107,7 +96,7 @@ export function Sidebar() {
           Session health
         </div>
         <p className="mt-2 text-xs leading-5 text-muted-foreground">
-          7 profiles isolated, 3 active, no cross-profile leakage detected.
+          {profiles} profiles isolated, {active} active.
         </p>
         <Button className="mt-3 w-full justify-start" size="sm" variant="outline" onClick={logout}>
           <LogOut className="h-4 w-4" />

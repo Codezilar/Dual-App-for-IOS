@@ -8,12 +8,13 @@ export function StatsPanel() {
   const instances = useWorkspaceStore((state) => state.instances);
   const active = instances.filter((instance) => instance.status === "ONLINE").length;
   const profiles = new Set(instances.map((instance) => instance.profileId)).size;
+  const opened = instances.filter((instance) => instance.lastActivity).length;
 
   const stats = [
     { label: "Active instances", value: active.toString(), icon: Activity, detail: "Live session containers" },
     { label: "Profiles", value: profiles.toString(), icon: ShieldCheck, detail: "Unique cookie stores" },
-    { label: "Storage", value: "18.4 GB", icon: HardDrive, detail: "Across cached profiles" },
-    { label: "Audit events", value: "1.2k", icon: Database, detail: "Mongo-backed activity log" }
+    { label: "Stored sessions", value: opened.toString(), icon: HardDrive, detail: "Profiles with activity" },
+    { label: "Audit events", value: "0", icon: Database, detail: "Mongo-backed activity log" }
   ];
 
   return (

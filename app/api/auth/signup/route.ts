@@ -33,11 +33,7 @@ export async function POST(request: Request) {
     slug: `${email.split("@")[0].replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-${user._id.toString().slice(-6)}`,
     ownerId: user._id,
     members: [{ userId: user._id, role: "OWNER" }],
-    folders: [
-      { name: "Growth Team", color: "#14b8a6" },
-      { name: "Support Ops", color: "#f59e0b" },
-      { name: "Personal", color: "#8b5cf6" }
-    ]
+    folders: []
   });
 
   await ActivityLog.create({

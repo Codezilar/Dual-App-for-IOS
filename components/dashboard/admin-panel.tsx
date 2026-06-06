@@ -1,14 +1,20 @@
+"use client";
+
 import { BarChart3, Cpu, Server, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const adminItems = [
-  { label: "Users", value: "42", detail: "8 admins, 34 members", icon: Users },
-  { label: "Workspaces", value: "9", detail: "3 over 100 profiles", icon: Server },
-  { label: "Storage usage", value: "71%", detail: "Profile cache + exports", icon: BarChart3 },
-  { label: "Active containers", value: "128", detail: "Across all clusters", icon: Cpu }
-];
+import { useWorkspaceStore } from "@/store/workspace-store";
 
 export function AdminPanel() {
+  const instances = useWorkspaceStore((state) => state.instances);
+  const active = instances.filter((instance) => instance.status === "ONLINE").length;
+  const profiles = new Set(instances.map((instance) => instance.profileId)).size;
+  const adminItems = [
+    { label: "Users", value: "1", detail: "Current account", icon: Users },
+    { label: "Workspaces", value: "1", detail: "Current workspace", icon: Server },
+    { label: "Profiles", value: profiles.toString(), detail: "Created from real instances", icon: BarChart3 },
+    { label: "Active containers", value: active.toString(), detail: "Currently online", icon: Cpu }
+  ];
+
   return (
     <section className="grid gap-4 xl:grid-cols-4">
       {adminItems.map((item) => (

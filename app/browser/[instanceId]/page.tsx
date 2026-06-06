@@ -1,14 +1,21 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, LockKeyhole, RotateCcw, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireUser } from "@/lib/auth";
-import { initialInstances } from "@/lib/mock-data";
+import { connectToDatabase } from "@/lib/db";
+import { AppInstance } from "@/lib/models";
 
 export default async function BrowserContainerPage({ params }: { params: Promise<{ instanceId: string }> }) {
-  await requireUser();
+  const user = await requireUser();
   const { instanceId } = await params;
-  const instance = initialInstances.find((item) => item.id === instanceId) ?? initialInstances[0];
+  await connectToDatabase();
+  const instance = await AppInstance.findOne({ _id: instanceId, userId: user.id }).populate("profileId").lean();
+
+  if (!instance) notFound();
+  const profile = typeof instance.profileId === "object" ? instance.profileId : null;
+  const profileKey = profile && "profileKey" in profile ? String(profile.profileKey) : String(instance.profileId);
 
   return (
     <main className="mesh-bg min-h-screen p-4 lg:p-8">
@@ -64,7 +71,7 @@ export default async function BrowserContainerPage({ params }: { params: Promise
                 <Card>
                   <CardContent className="p-4 text-sm">
                     <p className="font-medium">Profile ID</p>
-                    <p className="mt-1 truncate text-muted-foreground">{instance.profileId}</p>
+                    <p className="mt-1 truncate text-muted-foreground">{profileKey}</p>
                   </CardContent>
                 </Card>
                 <Card>

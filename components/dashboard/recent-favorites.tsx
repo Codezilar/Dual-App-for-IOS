@@ -39,12 +39,18 @@ function MiniList({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
-        {items.map((instance) => (
-          <div key={instance.id} className="flex items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-sm">
-            <span className="font-medium">{instance.name}</span>
-            <span className="text-xs text-muted-foreground">{formatRelativeTime(instance.lastActivity)}</span>
+        {items.length ? (
+          items.map((instance) => (
+            <div key={instance.id} className="flex items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-sm">
+              <span className="font-medium">{instance.name}</span>
+              <span className="text-xs text-muted-foreground">{formatRelativeTime(instance.lastActivity)}</span>
+            </div>
+          ))
+        ) : (
+          <div className="rounded-md border border-dashed bg-muted/30 px-3 py-8 text-center text-sm text-muted-foreground">
+            Nothing here yet.
           </div>
-        ))}
+        )}
       </CardContent>
     </Card>
   );

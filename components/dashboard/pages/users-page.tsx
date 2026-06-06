@@ -1,25 +1,41 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { MailPlus, MoreHorizontal, Shield, UserRound, Users } from "lucide-react";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const users = [
-  { name: "Avery Stone", email: "avery@dualworkspace.app", role: "OWNER", status: "active" },
-  { name: "Mina Patel", email: "mina@dualworkspace.app", role: "ADMIN", status: "active" },
-  { name: "Jon Bell", email: "jon@dualworkspace.app", role: "MEMBER", status: "active" },
-  { name: "Nora Okafor", email: "nora@dualworkspace.app", role: "VIEWER", status: "invited" }
-];
+type WorkspaceUser = {
+  _id: string;
+  name?: string;
+  email: string;
+  role: "OWNER" | "ADMIN" | "MEMBER" | "VIEWER";
+};
 
 export function UsersPage() {
+  const [users, setUsers] = useState<WorkspaceUser[]>([]);
+
+  useEffect(() => {
+    async function loadUsers() {
+      const response = await fetch("/api/users");
+      if (!response.ok) return;
+      const payload = (await response.json()) as { users: WorkspaceUser[] };
+      setUsers(payload.users);
+    }
+
+    void loadUsers();
+  }, []);
+
+  const admins = users.filter((user) => ["OWNER", "ADMIN"].includes(user.role)).length;
+
   return (
     <DashboardShell title="Users" description="Manage workspace members, roles, invitations, and access boundaries.">
       <div className="grid gap-3 md:grid-cols-3">
         <UserMetric label="Members" value={users.length} icon={Users} />
-        <UserMetric label="Admins" value={2} icon={Shield} />
-        <UserMetric label="Invites" value={1} icon={MailPlus} />
+        <UserMetric label="Admins" value={admins} icon={Shield} />
+        <UserMetric label="Invites" value={0} icon={MailPlus} />
       </div>
 
       <Card className="bg-card/80 backdrop-blur-xl">
@@ -31,26 +47,32 @@ export function UsersPage() {
           </Button>
         </CardHeader>
         <CardContent className="space-y-2">
-          {users.map((user) => (
-            <div key={user.email} className="flex items-center justify-between rounded-md bg-muted/60 px-3 py-3 text-sm">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground">
-                  <UserRound className="h-4 w-4" />
+          {users.length ? (
+            users.map((user) => (
+              <div key={user._id} className="flex items-center justify-between rounded-md bg-muted/60 px-3 py-3 text-sm">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground">
+                    <UserRound className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{user.name || user.email}</p>
+                    <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                  </div>
                 </div>
-                <div className="min-w-0">
-                  <p className="truncate font-medium">{user.name}</p>
-                  <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                <div className="flex items-center gap-2">
+                  <Badge className="border-transparent bg-background">{user.role.toLowerCase()}</Badge>
+                  <Badge className="border-transparent bg-background">active</Badge>
+                  <Button size="icon" variant="ghost" aria-label="User actions">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Badge className="border-transparent bg-background">{user.role.toLowerCase()}</Badge>
-                <Badge className="border-transparent bg-background">{user.status}</Badge>
-                <Button size="icon" variant="ghost" aria-label="User actions">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </div>
+            ))
+          ) : (
+            <div className="rounded-md border border-dashed bg-muted/30 px-3 py-8 text-center text-sm text-muted-foreground">
+              No users loaded yet.
             </div>
-          ))}
+          )}
         </CardContent>
       </Card>
     </DashboardShell>

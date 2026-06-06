@@ -9,6 +9,9 @@ import { useWorkspaceStore } from "@/store/workspace-store";
 
 export function AnalyticsPage() {
   const instances = useWorkspaceStore((state) => state.instances);
+  const opened = instances.filter((instance) => instance.lastActivity).length;
+  const active = instances.filter((instance) => instance.status === "ONLINE").length;
+  const favorites = instances.filter((instance) => instance.favorite).length;
   const byApp = appLaunchers
     .map((app) => ({
       ...app,
@@ -20,8 +23,8 @@ export function AnalyticsPage() {
   return (
     <DashboardShell title="Analytics" description="Measure app mix, workspace utilization, and session trends.">
       <div className="grid gap-3 md:grid-cols-3">
-        <AnalyticMetric label="Total launches" value="1.2k" icon={TrendingUp} />
-        <AnalyticMetric label="Utilization" value="74%" icon={Gauge} />
+        <AnalyticMetric label="Total instances" value={instances.length.toString()} icon={TrendingUp} />
+        <AnalyticMetric label="Active now" value={active.toString()} icon={Gauge} />
         <AnalyticMetric label="App coverage" value={byApp.length.toString()} icon={PieChart} />
       </div>
 
@@ -34,17 +37,23 @@ export function AnalyticsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {byApp.map((app) => (
-              <div key={app.type} className="space-y-1.5">
-                <div className="flex items-center justify-between text-sm">
-                  <span>{app.name}</span>
-                  <Badge className="border-transparent bg-background">{app.count}</Badge>
+            {byApp.length ? (
+              byApp.map((app) => (
+                <div key={app.type} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>{app.name}</span>
+                    <Badge className="border-transparent bg-background">{app.count}</Badge>
+                  </div>
+                  <div className="h-2 rounded-full bg-muted">
+                    <div className="h-full rounded-full bg-primary" style={{ width: `${(app.count / total) * 100}%` }} />
+                  </div>
                 </div>
-                <div className="h-2 rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${(app.count / total) * 100}%` }} />
-                </div>
+              ))
+            ) : (
+              <div className="rounded-md border border-dashed bg-muted/30 px-3 py-8 text-center text-sm text-muted-foreground">
+                Create an instance to see app distribution.
               </div>
-            ))}
+            )}
           </CardContent>
         </Card>
 
@@ -53,10 +62,15 @@ export function AnalyticsPage() {
             <CardTitle className="text-sm">Session Funnel</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 sm:grid-cols-2">
-            {["Created", "Opened", "Active", "Favorited"].map((stage, index) => (
-              <div key={stage} className="rounded-md bg-muted/60 p-4">
-                <p className="text-xs text-muted-foreground">{stage}</p>
-                <p className="mt-1 text-2xl font-semibold">{[128, 96, 42, 18][index]}</p>
+            {[
+              { stage: "Created", value: instances.length },
+              { stage: "Opened", value: opened },
+              { stage: "Active", value: active },
+              { stage: "Favorited", value: favorites }
+            ].map((item) => (
+              <div key={item.stage} className="rounded-md bg-muted/60 p-4">
+                <p className="text-xs text-muted-foreground">{item.stage}</p>
+                <p className="mt-1 text-2xl font-semibold">{item.value}</p>
               </div>
             ))}
           </CardContent>

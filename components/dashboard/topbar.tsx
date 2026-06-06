@@ -5,7 +5,6 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { notifications } from "@/lib/mock-data";
 import { useWorkspaceStore } from "@/store/workspace-store";
 
 type TopbarProps = {
@@ -64,14 +63,6 @@ export function Topbar({ title, description, showViewControls = false }: TopbarP
             <Moon className="hidden h-4 w-4 dark:block" />
           </Button>
         </div>
-      </div>
-      <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-        {notifications.map((item) => (
-          <div key={item.id} className="shrink-0 rounded-md border bg-card px-3 py-2 text-xs">
-            <span className="font-medium">{item.title}</span>
-            <span className="ml-2 text-muted-foreground">{item.description}</span>
-          </div>
-        ))}
       </div>
     </header>
   );

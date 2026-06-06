@@ -21,7 +21,7 @@ export function MonitoringPage() {
       <div className="grid gap-3 md:grid-cols-3">
         <HealthCard title="Online containers" value={online.length} icon={Activity} detail="Currently reachable" />
         <HealthCard title="Attention queue" value={attention.length} icon={AlertTriangle} detail="Suspended or errored" />
-        <HealthCard title="Runtime nodes" value={3} icon={Server} detail="Gateway workers ready" />
+        <HealthCard title="Runtime nodes" value={active > 0 ? 1 : 0} icon={Server} detail="Gateway workers ready" />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
@@ -33,15 +33,21 @@ export function MonitoringPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            {recent.map((instance) => (
-              <div key={instance.id} className="flex items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-sm">
-                <div>
-                  <p className="font-medium">{instance.name}</p>
-                  <p className="text-xs text-muted-foreground">{instance.cookieStore}</p>
+            {recent.length ? (
+              recent.map((instance) => (
+                <div key={instance.id} className="flex items-center justify-between rounded-md bg-muted/60 px-3 py-2 text-sm">
+                  <div>
+                    <p className="font-medium">{instance.name}</p>
+                    <p className="text-xs text-muted-foreground">{instance.cookieStore}</p>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{formatRelativeTime(instance.lastActivity)}</span>
                 </div>
-                <span className="text-xs text-muted-foreground">{formatRelativeTime(instance.lastActivity)}</span>
+              ))
+            ) : (
+              <div className="rounded-md border border-dashed bg-muted/30 px-3 py-8 text-center text-sm text-muted-foreground">
+                No activity yet.
               </div>
-            ))}
+            )}
           </CardContent>
         </Card>
 
@@ -56,7 +62,7 @@ export function MonitoringPage() {
             {["Cookie isolation", "Local storage namespaces", "Cache buckets", "Gateway heartbeat"].map((item) => (
               <div key={item} className="flex items-center justify-between rounded-md bg-muted/60 px-3 py-2">
                 <span>{item}</span>
-                <Badge className="border-transparent bg-background text-emerald-600 dark:text-emerald-300">passing</Badge>
+                <Badge className="border-transparent bg-background">{instances.length ? "ready" : "waiting"}</Badge>
               </div>
             ))}
           </CardContent>
