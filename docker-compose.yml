@@ -5,8 +5,13 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      MONGODB_URI: mongodb://dual:dual@mongodb:27017/dual_workspace?authSource=admin
+      MONGODB_DB: dual_workspace
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
     depends_on:
       - mongodb
+    restart: unless-stopped
 
   mongodb:
     image: mongo:7
@@ -18,5 +23,6 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    restart: unless-stopped
 volumes:
   mongo-data:

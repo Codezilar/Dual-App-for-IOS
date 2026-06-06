@@ -21,7 +21,7 @@ export function MonitoringPage() {
       <div className="grid gap-3 md:grid-cols-3">
         <HealthCard title="Online containers" value={online.length} icon={Activity} detail="Currently reachable" />
         <HealthCard title="Attention queue" value={attention.length} icon={AlertTriangle} detail="Suspended or errored" />
-        <HealthCard title="Runtime nodes" value={active > 0 ? 1 : 0} icon={Server} detail="Gateway workers ready" />
+        <HealthCard title="Runtime nodes" value={online.length > 0 ? 1 : 0} icon={Server} detail="Gateway workers ready" />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">

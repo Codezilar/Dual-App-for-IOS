@@ -87,7 +87,18 @@ npm run build
 npm run start
 npm run lint
 npm run typecheck
+npm run check
 ```
+
+## Docker / Production
+
+Build and run the app with Docker Compose:
+
+```bash
+docker compose up --build -d
+```
+
+When using Docker Compose, the compose network connects the app to MongoDB via the service name. The `docker-compose.yml` file already configures `MONGODB_URI` to use `mongodb:27017` for container-to-container traffic.
 
 ## App Routes
 
